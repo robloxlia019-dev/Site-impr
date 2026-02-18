@@ -3,6 +3,7 @@ import subprocess
 from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
+app.debug = True  # Mostra logs detalhados
 bot_process = None
 
 def is_running():
@@ -35,6 +36,15 @@ def stop():
     if is_running():
         bot_process.terminate()
         bot_process = None
+    return redirect("/")
+
+@app.route("/ping")
+def ping():
+    return "alive"
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)        bot_process = None
     return redirect("/")
 
 @app.route("/ping")
