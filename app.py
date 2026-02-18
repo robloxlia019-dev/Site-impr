@@ -1,40 +1,27 @@
 import os
 import subprocess
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, redirect, flash
 
 app = Flask(__name__)
-app.secret_key = "painelsecret"  # necessário para mensagens flash
+app.secret_key = "painelsecret"
 app.debug = True
 
-bot_process = None  # controle do processo do bot
+bot_process = None  # Variável global do processo
 
-# Verifica se o bot está rodando
 def is_running():
     return bot_process and bot_process.poll() is None
 
-# Página inicial
 @app.route("/")
 def home():
     status = "ONLINE" if is_running() else "OFFLINE"
     return render_template("index.html", status=status)
 
-# Upload do bot.py
-@app.route("/upload", methods=["POST"])
-def upload():
-    file = request.files["file"]
-    if file and file.filename.endswith(".py"):
-        file.save("bot.py")
-        flash("Bot enviado com sucesso!", "success")
-    else:
-        flash("Envie apenas arquivos .py", "error")
-    return redirect("/")
-
-# Start do bot
+# Start do bot (usa o bot.py que já está na pasta)
 @app.route("/start")
 def start():
     global bot_process
     if not os.path.exists("bot.py"):
-        flash("Envie um bot primeiro!", "error")
+        flash("bot.py não encontrado no servidor!", "error")
         return redirect("/")
     if not is_running():
         bot_process = subprocess.Popen(["python3", "bot.py"])
@@ -43,7 +30,6 @@ def start():
         flash("Bot já está rodando!", "info")
     return redirect("/")
 
-# Stop do bot
 @app.route("/stop")
 def stop():
     global bot_process
@@ -55,7 +41,6 @@ def stop():
         flash("Nenhum bot rodando.", "info")
     return redirect("/")
 
-# Ping para manter online
 @app.route("/ping")
 def ping():
     return "alive"
