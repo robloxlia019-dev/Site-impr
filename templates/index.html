@@ -1,27 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Painel Host</title>
+    <title>Painel do Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e2f;
+            color: #f5f5f5;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 { color: #ff6f61; }
+        .status {
+            font-size: 1.5em;
+            margin: 20px;
+        }
+        .online { color: #00ff00; }
+        .offline { color: #ff0000; }
+        button {
+            background: #ff6f61;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #ff847c;
+        }
+        input[type="file"] {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .flash {
+            margin: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success { background: #00aa00; }
+        .error { background: #aa0000; }
+        .info { background: #ffaa00; }
+    </style>
 </head>
 <body>
 
 <h1>Painel do Bot</h1>
 
-<h2>Status: {{status}}</h2>
+<div class="status {{ 'online' if status == 'ONLINE' else 'offline' }}">
+    Status: {{status}}
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash {{category}}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
 <form action="/upload" method="post" enctype="multipart/form-data">
-<input type="file" name="file">
-<button type="submit">UPLOAD BOT</button>
+    <input type="file" name="file">
+    <button type="submit">UPLOAD BOT</button>
 </form>
 
-<br><br>
+<div>
+    <a href="/start"><button>START</button></a>
+    <a href="/stop"><button>STOP</button></a>
+</div>
 
-<a href="/start"><button>START</button></a>
-<a href="/stop"><button>STOP</button></a>
-
-<br><br>
-
-<p>Use /ping para manter online</p>
+<p>Use <strong>/ping</strong> para manter online</p>
 
 </body>
 </html>
